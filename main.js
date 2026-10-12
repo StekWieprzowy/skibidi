@@ -497,15 +497,6 @@ const teakTex = canvasTex(1024, (g, S) => {
     g.fillRect(rnd() * S, y, 5, ph);
   }
 });
-const screenTex = canvasTex(256, (g, S) => {
-  const grd = g.createLinearGradient(0, 0, 0, S);
-  grd.addColorStop(0, '#0d2236'); grd.addColorStop(1, '#03070c');
-  g.fillStyle = grd; g.fillRect(0, 0, S, S);
-  g.strokeStyle = '#4fc3e8'; g.lineWidth = 6;
-  g.beginPath(); g.arc(S * 0.32, S * 0.55, S * 0.2, Math.PI * 0.8, Math.PI * 2.2); g.stroke();
-  g.fillStyle = '#9fe3f5'; g.font = `bold ${S * 0.12}px sans-serif`; g.fillText('25 kn', S * 0.58, S * 0.5);
-  g.fillStyle = 'rgba(160,220,240,.6)'; g.fillRect(S * 0.58, S * 0.6, S * 0.3, S * 0.03); g.fillRect(S * 0.58, S * 0.7, S * 0.22, S * 0.03);
-}, false);
 
 // lakier kadłuba: biały pas dna poniżej linii wody, reszta w wybranym kolorze; metaliczne drobinki pod lakierem bezbarwnym
 const hullMat = new THREE.MeshPhysicalMaterial({
@@ -540,8 +531,8 @@ const glassMat = new THREE.MeshPhysicalMaterial({
   color: 0x0c161d, metalness: 0.0, roughness: 0.02, clearcoat: 1, clearcoatRoughness: 0.0, transparent: true, opacity: 0.6,
   side: THREE.DoubleSide, depthWrite: false, envMapIntensity: 1.8,
 });
-const screenMat = new THREE.MeshBasicMaterial({ map: screenTex, color: new THREE.Color(1, 1, 1).multiplyScalar(SCENE_LIGHT) });
-const fabricMat = new THREE.MeshPhysicalMaterial({ color: 0x4e5963, roughness: 0.9, sheen: 1, sheenRoughness: 0.6, sheenColor: 0x9aa4ad, normalMap: fabricNormal, side: THREE.DoubleSide });
+const screenMat = new THREE.MeshPhysicalMaterial({ color: 0x05070a, roughness: 0.08, metalness: 0, clearcoat: 1, clearcoatRoughness: 0.02 }); // ekran wyłączony
+const fabricMat = new THREE.MeshPhysicalMaterial({ color: 0x2f3a46, roughness: 0.9, sheen: 1, sheenRoughness: 0.6, sheenColor: 0x9aa4ad, normalMap: fabricNormal, side: THREE.DoubleSide });
 const flagMat = new THREE.MeshPhysicalMaterial({ color: 0xd8d8d4, roughness: 0.9, sheen: 0.6, side: THREE.DoubleSide });
 
 /* ==================================================================== *
@@ -847,28 +838,32 @@ const flagBase = Float32Array.from(flagGeo.attributes.position.array);
   const dx0 = 0.565 * LH, dx1 = 0.66 * LH;
   rbox(dx1 - dx0, 0.5, 1.7, 0.04, deckMat, (dx0 + dx1) / 2, FLOOR + 0.25, 0);
   const dashTop = rbox(0.42, 0.08, 1.66, 0.035, dashMat, dx0 + 0.24, FLOOR + 0.53, 0);
-  dashTop.rotation.z = 0.35;
-  for (const z of [-0.18, 0.36]) {
-    const scr = new THREE.Mesh(new THREE.PlaneGeometry(0.34, 0.2), screenMat);
-    scr.position.set(dx0 + 0.13, FLOOR + 0.56, z);
-    scr.rotation.set(0, -Math.PI / 2, 0);
-    scr.rotateX(-0.35);
-    hullGroup.add(scr);
+  dashTop.rotation.z = 0.35; // górna płyta pochylona w stronę sternika
+  // ekrany (wyłączone) wpuszczone w górną płytę deski, z ramką
+  for (const z of [-0.22, 0.36]) {
+    const bezel = rbox(0.22, 0.012, 0.36, 0.005, frameMat, 0, 0.042, z, dashTop);
+    const scr = new THREE.Mesh(new THREE.PlaneGeometry(0.33, 0.19), screenMat);
+    scr.rotation.set(-Math.PI / 2, 0, Math.PI / 2);
+    scr.position.set(0, 0.0065, 0);
+    bezel.add(scr);
   }
-  // kierownica (prawa strona)
+  // kierownica (prawa strona): oś skierowana do sternika, kolumna wchodzi w deskę
   const wheel = new THREE.Group();
-  wheel.position.set(dx0 - 0.08, FLOOR + 0.6, 0.36);
-  wheel.rotation.z = 0.45;
+  wheel.position.set(dx0 - 0.1, FLOOR + 0.6, 0.36);
+  wheel.rotation.z = -0.55;
   hullGroup.add(wheel);
-  const rim = new THREE.Mesh(new THREE.TorusGeometry(0.17, 0.014, 12, 48), frameMat);
+  const rim = new THREE.Mesh(new THREE.TorusGeometry(0.17, 0.015, 14, 56), frameMat);
   rim.rotation.y = Math.PI / 2;
   rim.castShadow = true;
   wheel.add(rim);
   for (let k = 0; k < 3; k++) {
-    const ang = k * Math.PI * 2 / 3 + Math.PI / 2;
-    rod(V(0, 0, 0), V(0, Math.sin(ang) * 0.165, Math.cos(ang) * 0.165), 0.008, chromeMat, wheel);
+    const ang = k * Math.PI * 2 / 3 - Math.PI / 2;
+    rod(V(0.02, 0, 0), V(0, Math.sin(ang) * 0.162, Math.cos(ang) * 0.162), 0.009, chromeMat, wheel);
   }
-  rod(V(0, 0, 0), V(0.16, 0, 0), 0.018, chromeMat, wheel);
+  const hub = new THREE.Mesh(new THREE.CylinderGeometry(0.04, 0.045, 0.04, 24), chromeMat);
+  hub.rotation.z = Math.PI / 2; hub.position.x = 0.01; hub.castShadow = true;
+  wheel.add(hub);
+  rod(V(0.02, 0, 0), V(0.26, 0, 0), 0.02, frameMat, wheel);
 }
 
 /* ---------- przyciemniana szyba (kopuła) ---------- */
@@ -902,17 +897,37 @@ const bimini = new THREE.Group();
 bimini.visible = false;
 hullGroup.add(bimini);
 {
-  const xa = 2.9, xb = 5.45, H = 1.95, W = 1.02;
-  const yTop = (x, z) => H + 0.08 * (1 - (x - xa) / (xb - xa)) - 0.07 * (z / W) * (z / W);
-  gridMesh(16, 12, (a, b) => { const x = lerp(xa, xb, a), z = lerp(-W, W, b); return [x, yTop(x, z), z]; }, fabricMat, [1, 1], bimini);
-  for (const x of [xa, xb]) {
-    const arc = []; for (let i = 0; i <= 16; i++) { const z = lerp(-W, W, i / 16); arc.push(V(x, yTop(x, z) - 0.015, z)); }
-    tube(arc, 0.016, chromeMat, 40, bimini);
+  const xa = 2.75, xb = 5.35, xm = (xa + xb) / 2, half = (xb - xa) / 2, W = 1.0;
+  // plan z zaokrąglonymi narożnikami, wypukły przekrój, lekki spadek ku przodowi
+  const wAt = (x) => W * Math.pow(1 - Math.pow(Math.abs(x - xm) / half, 6), 1 / 6);
+  const yTop = (x, z) => 1.98 - 0.1 * ((x - xa) / (xb - xa)) - 0.13 * (z / W) * (z / W);
+  const canvasPt = (a, b, off = 0) => { const x = lerp(xa, xb, a), w = wAt(x), z = lerp(-w, w, b); return [x, yTop(x, z) + off, z]; };
+  gridMesh(40, 20, (a, b) => canvasPt(a, b), fabricMat, [1, 1], bimini);
+  // obszyty brzeg
+  const hem = [];
+  for (let i = 0; i <= 120; i++) {
+    const t = (i / 120) * Math.PI * 2, c = Math.cos(t), sn = Math.sin(t);
+    const x = xm + half * Math.sign(c) * Math.pow(Math.abs(c), 1 / 3) * 0.999;
+    const z = W * Math.sign(sn) * Math.pow(Math.abs(sn), 1 / 3) * 0.999;
+    hem.push(V(x, yTop(x, z) - 0.008, z));
   }
-  for (const side of [-1, 1]) {
-    const zd = (s) => side * (halfBeam(s) - 0.1);
-    rod(V(xa, yTop(xa, W) - 0.02, side * W), V(xa - 0.1, deckSurfY(0.34, zd(0.34)), zd(0.34)), 0.016, chromeMat, bimini);
-    rod(V(xb, yTop(xb, W) - 0.02, side * W), V(xb - 0.75, deckSurfY(0.57, zd(0.57)) + 0.02, zd(0.57)), 0.016, chromeMat, bimini);
+  tube(hem, 0.016, fabricMat, 240, bimini, true);
+  // pałąki: łuk pod płótnem przechodzący w nogi do mocowań na pokładzie
+  const mount = (s, side) => { const z = side * (halfBeam(s) - 0.09); return V(s * LH, deckSurfY(s, z) + 0.03, z); };
+  const bows = [[xa + 0.12, 0.33], [xm, 0.4], [xb - 0.12, 0.47]];
+  for (const [x, ms] of bows) {
+    const pts = [];
+    const mL = mount(ms, -1), mR = mount(ms, 1), w = wAt(x) - 0.03;
+    pts.push(mL, V(lerp(mL.x, x, 0.55), lerp(mL.y, yTop(x, w), 0.6), -w * 1.02));
+    for (let i = 0; i <= 12; i++) { const z = lerp(-w, w, i / 12); pts.push(V(x, yTop(x, z) - 0.03, z)); }
+    pts.push(V(lerp(mR.x, x, 0.55), lerp(mR.y, yTop(x, w), 0.6), w * 1.02), mR);
+    tube(pts, 0.014, satinMat, 120, bimini);
+  }
+  // podstawy mocowań
+  for (const ms of [0.33, 0.4, 0.47]) for (const side of [-1, 1]) {
+    const m = mount(ms, side);
+    const base = addMesh(new THREE.CylinderGeometry(0.03, 0.035, 0.03, 20), chromeMat, bimini);
+    base.position.set(m.x, m.y - 0.02, m.z);
   }
 }
 
