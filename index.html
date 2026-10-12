@@ -4,8 +4,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ctext y='26' font-size='26'%3E%E2%9B%B5%3C/text%3E%3C/svg%3E">
-<title>Skibidi 27 – konfigurator jachtu 3D</title>
-<meta name="description" content="Demo konfiguratora jachtu motorowego w 3D. Obracaj, przybliżaj i zmieniaj kolor kadłuba.">
+<title>El-Iseo – konfigurator 3D</title>
+<meta name="description" content="Demo konfiguratora 3D jachtu El-Iseo. Obracaj, przybliżaj, zmieniaj kolor kadłuba i tapicerkę.">
 <style>
   :root {
     --bg: #0b1218;
@@ -85,11 +85,12 @@
 <header>
   <div class="brand">
     <small>Konfigurator</small>
-    <h1>Skibidi 27</h1>
+    <h1>El-Iseo</h1>
   </div>
   <div class="specs">
-    <div>Długość <b>8,35 m</b></div>
-    <div>Szerokość <b>2,50 m</b></div>
+    <div>Długość <b>8,35 m</b> · Szerokość <b>2,50 m</b></div>
+    <div>Zanurzenie <b>1,0 m</b> · <b>6</b> osób</div>
+    <div>Prędkość maks. <b>40 kn</b></div>
   </div>
 </header>
 
@@ -97,12 +98,16 @@
 
 <section class="panel" aria-label="Konfiguracja">
   <div class="row">
-    <div class="label">Kolor kadłuba <strong id="colorName">Krem</strong></div>
+    <div class="label">Kolor kadłuba <strong id="colorName"></strong></div>
     <div class="swatches" id="swatches" role="group" aria-label="Kolor kadłuba"></div>
   </div>
   <div class="row">
+    <div class="label">Tapicerka <strong id="uphName"></strong></div>
+    <div class="swatches" id="uphSwatches" role="group" aria-label="Kolor tapicerki"></div>
+  </div>
+  <div class="row">
     <div class="views" id="views" role="group" aria-label="Widok kamery"></div>
-    <label class="toggle"><input type="checkbox" id="bimini" checked><span class="switch"></span>Bimini</label>
+    <label class="toggle"><input type="checkbox" id="bimini"><span class="switch"></span>Bimini</label>
   </div>
 </section>
 
