@@ -2,10 +2,10 @@
   'use strict';
 
   const DEMOS = [
-    { id: 'yacht',  path: 'demo/el-iseo/', n: '01', t: { pl: 'Jacht', en: 'Yacht' } },
-    { id: 'car',    path: 'demo/car/',     n: '02', t: { pl: 'Auto', en: 'Car' } },
-    { id: 'camper', path: 'demo/camper/',  n: '03', t: { pl: 'Kamper', en: 'Camper' } },
-    { id: 'sauna',  path: 'demo/sauna/',   n: '04', t: { pl: 'Sauna', en: 'Sauna' } },
+    { id: 'yacht',  path: 'demo/el-iseo/index.html', n: '01', t: { pl: 'Jacht', en: 'Yacht' } },
+    { id: 'car',    path: 'demo/car/index.html',     n: '02', t: { pl: 'Auto', en: 'Car' } },
+    { id: 'camper', path: 'demo/camper/index.html',  n: '03', t: { pl: 'Kamper', en: 'Camper' } },
+    { id: 'sauna',  path: 'demo/sauna/index.html',   n: '04', t: { pl: 'Sauna', en: 'Sauna' } },
   ];
 
   const SECTORS = {
