@@ -92,6 +92,8 @@ export function buildUI(stage, { title, subtitle, specs = [], groups = [], toggl
   viewsBox.appendChild(autoBtn);
   autoBtn.addEventListener('click', () => setAuto(!autoOn));
   setAuto(true);
+  window.__setAuto = setAuto;
+  window.__panel = (on) => document.body.classList.toggle('show-panel', !!on);
   controls.addEventListener('start', () => { clearTimeout(idleTimer); controls.autoRotate = false; hint.classList.add('hide'); });
   controls.addEventListener('end', () => { clearTimeout(idleTimer); if (autoOn) idleTimer = setTimeout(() => { controls.autoRotate = true; }, 5000); });
   setTimeout(() => hint.classList.add('hide'), 7000);

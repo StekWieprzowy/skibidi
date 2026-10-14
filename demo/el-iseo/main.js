@@ -148,7 +148,7 @@ try {
 const DPR = Math.min(window.devicePixelRatio, 2);
 renderer.setPixelRatio(DPR);
 renderer.toneMapping = THREE.ACESFilmicToneMapping;
-renderer.toneMappingExposure = +(QP.get('exp') || 0.34);
+renderer.toneMappingExposure = +(QP.get('exp') || (new URLSearchParams(location.search).has('dusk') ? 0.36 : 0.34));
 renderer.shadowMap.enabled = true;
 renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 
@@ -160,6 +160,7 @@ const SCENE_LIGHT = 2.4;
 const LANG_EN = (QP.get('lang') || '').toLowerCase() === 'en';
 const T = (pl, en) => (LANG_EN ? en : pl);
 const NARROW = window.innerWidth / window.innerHeight < 0.8;
+const DUSK = QP.has('dusk');
 const VIEWS = {
   iso:     { label: T('3/4', '3/4'),    pos: V(6.6, 2.7, 7.4),     target: V(0, 0.55, 0) },
   side:    { label: T('Bok', 'Side'),    pos: V(0.01, 1.2, 14.5),   target: V(0, 0.55, 0) },
@@ -169,6 +170,9 @@ const VIEWS = {
 };
 if (NARROW) Object.values(VIEWS).forEach((v) => v.pos.sub(v.target).multiplyScalar(1.85).add(v.target));
 else if (QP.has('embed')) Object.values(VIEWS).forEach((v) => v.pos.sub(v.target).multiplyScalar(1.32).add(v.target));
+// w ujęciu o zmierzchu kamera nisko nad wodą, z horyzontem i słońcem w kadrze
+if (DUSK && !NARROW) { VIEWS.iso.pos.set(13.4, 1.8, 14.6); VIEWS.iso.target.set(-1.1, 2.0, 0); }
+if (DUSK && NARROW) { VIEWS.iso.pos.set(21, 2.4, 23); VIEWS.iso.target.set(0.4, 0.9, 0); }
 camera.position.copy(VIEWS.iso.pos);
 
 const controls = new OrbitControls(camera, canvas);
@@ -186,29 +190,42 @@ if (QP.has('embed')) controls.enableZoom = false;
 /* ==================================================================== *
  *  Niebo: fizyczny model atmosfery (Preetham) + chmury
  * ==================================================================== */
-const SUN_EL = +(QP.get('el') || 30), SUN_AZ = +(QP.get('az') || 110);
+// ?dusk — ujęcie o zmierzchu (hero strony): nisko zawieszone słońce za łodzią, góry, granatowa woda
+const SUN_EL = +(QP.get('el') || (DUSK ? 2.6 : 30)), SUN_AZ = +(QP.get('az') || (DUSK ? 214 : 110));
 const SUN_DIR = new THREE.Vector3().setFromSphericalCoords(1, THREE.MathUtils.degToRad(90 - SUN_EL), THREE.MathUtils.degToRad(SUN_AZ));
 const sky = new Sky();
 sky.scale.setScalar(10000);
 {
   const u = sky.material.uniforms;
-  u.turbidity.value = 1.6;
-  u.rayleigh.value = 2.4;
-  u.mieCoefficient.value = 0.003;
+  u.turbidity.value = DUSK ? 3.2 : 1.6;
+  u.rayleigh.value = DUSK ? 2.2 : 2.4;
+  u.mieCoefficient.value = DUSK ? 0.006 : 0.003;
   u.mieDirectionalG.value = 0.82;
-  u.cloudCover.value = 0.4;
+  u.cloudCover.value = DUSK ? 0.22 : 0.4;
   u.sunPosition.value.copy(SUN_DIR);
 }
 
 // odległe wzgórza wokół jeziora (perspektywa powietrzna: im wyżej i dalej, tym bardziej zamglone)
+const SUN_TH = Math.atan2(SUN_DIR.z, SUN_DIR.x);
 const hills = (() => {
-  const N = 720, R = 2600, pos = [], idx = [], hh = [];
+  const N = DUSK ? 2880 : 720, R = 2600, pos = [], idx = [], hh = [];
   const rnd = makeRand(77), oct = [[3, 0.5], [7, 0.28], [17, 0.14], [41, 0.06], [97, 0.025]].map(([f, a]) => [f, a, rnd() * 6.28, rnd() * 6.28]);
+  const ridge = [[3, 0.42], [7, 0.26], [13, 0.16], [29, 0.09], [61, 0.05], [127, 0.028], [263, 0.014], [541, 0.007]].map(([f, a]) => [f, a, rnd() * 6.28]);
   for (let i = 0; i <= N; i++) {
     const th = (i / N) * Math.PI * 2;
     let h = 0;
-    for (const [f, a, p1, p2] of oct) h += a * (Math.sin(th * f + p1) * 0.6 + Math.sin(th * f * 1.7 + p2) * 0.4);
-    h = 70 + 190 * Math.max(0, h + 0.35);
+    if (DUSK) {
+      // grzbiety: suma "odwróconych" sinusów daje ostre szczyty i łagodne doliny
+      let r = 0;
+      for (const [f, a, p1] of ridge) r += a * Math.pow(1 - Math.abs(Math.sin(th * f + p1)), 1.6);
+      const massif = 0.5 + 0.5 * Math.sin(th * 2 + 0.9);
+      // po prawej (od strony słońca) góry niższe, żeby nie zasłaniały tarczy
+      const sunSide = Math.exp(-Math.pow(Math.atan2(Math.sin(th - SUN_TH), Math.cos(th - SUN_TH)) / 0.32, 2));
+      h = 20 + 520 * (1 - 0.7 * sunSide) * Math.pow(Math.max(0, r * (0.55 + 0.75 * massif) - 0.16), 1.25);
+    } else {
+      for (const [f, a, p1, p2] of oct) h += a * (Math.sin(th * f + p1) * 0.6 + Math.sin(th * f * 1.7 + p2) * 0.4);
+      h = 70 + 190 * Math.max(0, h + 0.35);
+    }
     hh.push(h);
     const x = Math.cos(th) * R, z = Math.sin(th) * R;
     pos.push(x, -20, z, x, h, z);
@@ -219,16 +236,16 @@ const hills = (() => {
   g.setIndex(idx);
   return new THREE.Mesh(g, new THREE.ShaderMaterial({
     side: THREE.DoubleSide,
-    uniforms: { uNear: { value: new THREE.Color('#4f7356').multiplyScalar(SCENE_LIGHT * 1.15) }, uFar: { value: new THREE.Color('#b9c9d5').multiplyScalar(SCENE_LIGHT * 1.2) } },
+    uniforms: { uNear: { value: new THREE.Color(DUSK ? '#26303e' : '#4f7356').multiplyScalar(SCENE_LIGHT * 1.15) }, uFar: { value: new THREE.Color(DUSK ? '#7d8899' : '#b9c9d5').multiplyScalar(SCENE_LIGHT * 1.2) }, uTop: { value: DUSK ? 700 : 260 } },
     vertexShader: `varying vec3 vW; void main(){ vec4 w = modelMatrix * vec4(position, 1.0); vW = w.xyz; gl_Position = projectionMatrix * viewMatrix * w; }`,
-    fragmentShader: `uniform vec3 uNear; uniform vec3 uFar; varying vec3 vW;
+    fragmentShader: `uniform vec3 uNear; uniform vec3 uFar; uniform float uTop; varying vec3 vW;
       float h(vec2 p){ return fract(sin(dot(p, vec2(12.9898, 78.233))) * 43758.5453); }
       float n(vec2 p){ vec2 i = floor(p), f = fract(p); f = f * f * (3.0 - 2.0 * f);
         return mix(mix(h(i), h(i + vec2(1, 0)), f.x), mix(h(i + vec2(0, 1)), h(i + vec2(1, 1)), f.x), f.y); }
       void main(){
         float ang = atan(vW.z, vW.x) * 400.0;
         float tex = n(vec2(ang, vW.y * 0.08)) * 0.5 + n(vec2(ang * 3.1, vW.y * 0.25)) * 0.3 + n(vec2(ang * 9.0, vW.y * 0.7)) * 0.2;
-        float haze = 0.55 + 0.35 * smoothstep(0.0, 260.0, vW.y);
+        float haze = 0.55 + 0.35 * smoothstep(0.0, uTop, vW.y);
         vec3 c = mix(uNear * (0.75 + 0.5 * tex), uFar, haze);
         gl_FragColor = vec4(c, 1.0);
         #include <tonemapping_fragment>
@@ -286,7 +303,7 @@ const waterShader = {
     color: { value: null }, tDiffuse: { value: null }, textureMatrix: { value: null },
     uNormals: { value: null }, uTime: { value: 0 },
     uSun: { value: new THREE.Vector3() }, uSunColor: { value: new THREE.Color() },
-    uDeep: { value: new THREE.Color('#06141d') }, uScatter: { value: new THREE.Color('#14495a') },
+    uDeep: { value: new THREE.Color(DUSK ? '#030912' : '#06141d') }, uScatter: { value: new THREE.Color(DUSK ? '#0d2238' : '#14495a') },
   }]),
   vertexShader: /* glsl */`
     uniform mat4 textureMatrix;
@@ -358,11 +375,11 @@ const water = new Reflector(new THREE.PlaneGeometry(20000, 20000), {
 water.material.lights = true;
 water.material.uniforms.uNormals.value = waterNormals;
 water.material.uniforms.uSun.value.copy(SUN_DIR);
-water.material.uniforms.uSunColor.value.set(0xfff1dc).multiplyScalar(SCENE_LIGHT);
+water.material.uniforms.uSunColor.value.set(DUSK ? 0xffb878 : 0xfff1dc).multiplyScalar(SCENE_LIGHT * (DUSK ? 1.6 : 1));
 water.material.uniforms.uDeep.value.multiplyScalar(SCENE_LIGHT);
 water.material.uniforms.uScatter.value.multiplyScalar(SCENE_LIGHT);
 water.rotation.x = -Math.PI / 2;
-water.receiveShadow = true;
+water.receiveShadow = !DUSK; // przy słońcu tuż nad horyzontem cień wychodzi poza mapę cieni
 // nie renderuj odbicia podczas przebiegów pomocniczych (np. normalne dla GTAO)
 {
   const mirrorRender = water.onBeforeRender;
@@ -373,8 +390,8 @@ scene.add(water);
 /* ==================================================================== *
  *  Światła
  * ==================================================================== */
-scene.add(new THREE.HemisphereLight(0xdfeaf2, 0x0d2633, 0.15));
-const sun = new THREE.DirectionalLight(0xfff1dc, +(QP.get('sun') || 22));
+scene.add(new THREE.HemisphereLight(DUSK ? 0x9fb4d6 : 0xdfeaf2, 0x0d2633, DUSK ? 0.35 : 0.15));
+const sun = new THREE.DirectionalLight(DUSK ? 0xffc890 : 0xfff1dc, +(QP.get('sun') || (DUSK ? 16 : 22)));
 sun.position.copy(SUN_DIR).multiplyScalar(30);
 sun.castShadow = true;
 sun.shadow.mapSize.set(HQ ? 4096 : 2048, HQ ? 4096 : 2048);
@@ -1016,6 +1033,8 @@ function setAuto(on) {
   if (on) [...viewsBox.children].forEach((b) => b.dataset.key && b.setAttribute('aria-pressed', 'false'));
 }
 setAuto(true);
+window.__setAuto = setAuto;
+window.__panel = (on) => document.body.classList.toggle('show-panel', !!on);
 autoBtn.addEventListener('click', () => setAuto(!autoOn));
 const hint = document.getElementById('hint');
 controls.addEventListener('start', () => { tween = null; clearTimeout(idleTimer); controls.autoRotate = false; hint && hint.classList.add('hide'); });
@@ -1028,7 +1047,7 @@ setTimeout(() => hint && hint.classList.add('hide'), 7000);
 const composer = new EffectComposer(renderer, new THREE.WebGLRenderTarget(1, 1, { type: THREE.HalfFloatType, samples: HQ ? 4 : 0 }));
 composer.addPass(new RenderPass(scene, camera));
 let gtao = null;
-if (HQ) {
+if (HQ && !DUSK) { // przy słońcu w kadrze odszumianie GTAO daje NaN — w ujęciu o zmierzchu bez GTAO
   gtao = new GTAOPass(scene, camera, 1, 1);
   gtao.updateGtaoMaterial({ radius: 0.45, distanceExponent: 1.6, thickness: 1.2, scale: 1.0, samples: 16, distanceFallOff: 1.0, screenSpaceRadius: false });
   gtao.updatePdMaterial({ lumaPhi: 10, depthPhi: 2, normalPhi: 3, radius: 5, radiusExponent: 1, rings: 2, samples: 16 });
@@ -1045,7 +1064,7 @@ function resize() {
   camera.aspect = w / h;
   camera.fov = NARROW ? 44 : 30;
   if (QP.has('embed')) {
-    if (w >= 900) camera.setViewOffset(w, h, -w * 0.11, h * 0.07, w, h);
+    if (w >= 900) camera.setViewOffset(w, h, -w * (DUSK ? 0.15 : 0.11), h * (DUSK ? 0.0 : 0.07), w, h);
     else camera.setViewOffset(w, h, 0, -h * 0.06, w, h);
   }
   camera.updateProjectionMatrix();

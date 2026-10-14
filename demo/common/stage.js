@@ -31,7 +31,7 @@ if (LANG === 'en') document.documentElement.lang = 'en';
 // W osadzeniu na stronie przesuwamy obraz tak, by model nie wchodził pod nagłówek strony-matki.
 export function frameOffset(camera, w, h) {
   if (!EMBED) { camera.clearViewOffset(); return; }
-  if (w >= 900) camera.setViewOffset(w, h, -w * 0.11, h * 0.07, w, h);
+  if (w >= 900) camera.setViewOffset(w, h, -w * 0.17, h * 0.03, w, h);
   else camera.setViewOffset(w, h, 0, -h * 0.06, w, h);
 }
 
@@ -56,7 +56,7 @@ export function createStage({ views, fov = 30, minDistance = 3, maxDistance = 25
   const scene = new THREE.Scene();
   const camera = new THREE.PerspectiveCamera(fov, 1, 0.1, 30000);
   if (NARROW) Object.values(views).forEach((v) => v.pos.sub(v.target).multiplyScalar(narrowScale).add(v.target));
-  else if (EMBED) Object.values(views).forEach((v) => v.pos.sub(v.target).multiplyScalar(1.22).add(v.target));
+  else if (EMBED) Object.values(views).forEach((v) => v.pos.sub(v.target).multiplyScalar(1.32).add(v.target));
   const first = Object.values(views)[0];
   camera.position.copy(first.pos);
 

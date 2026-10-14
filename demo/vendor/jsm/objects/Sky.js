@@ -228,7 +228,8 @@ Sky.SkyShader = {
 				retColor = mix( retColor, cloudCol, cl * 0.9 );
 			}
 
-			gl_FragColor = vec4( retColor, 1.0 );
+			// [skibidi] bufor HalfFloat ma maks. ~65504 — przycinamy tarczę słońca, żeby bloom nie dostał Inf/NaN
+			gl_FragColor = vec4( min( retColor, vec3( 400.0 ) ), 1.0 );
 
 			#include <tonemapping_fragment>
 			#include <colorspace_fragment>
