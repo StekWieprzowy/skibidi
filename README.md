@@ -15,7 +15,7 @@ jedna ciągła powierzchnia kadłuba z zaokrągloną krawędzią pokładu i kokp
 przyciemniana szyba-kopuła, chromowany odbojnik i przetłoczenie na burcie, platforma rufowa z teakiem,
 wnętrze kokpitu (sofy, deska rozdzielcza, kierownica). Woda ma lustrzane odbicia, niebo jest generowane shaderem.
 
-## Uruchomienie
+## Uruchomienie (konfigurator jest w `demo/el-iseo/`)
 
 Strona wymaga lokalnego serwera HTTP (moduły ES nie działają z `file://`):
 

@@ -69,6 +69,10 @@
   #loader.done { opacity: 0; pointer-events: none; }
   #error { position: fixed; inset: 0; display: none; place-items: center; padding: 24px; text-align: center; background: var(--bg); z-index: 6; }
 
+  /* tryb osadzenia (iframe na stronie studia) */
+  body.embed header, body.embed .hint { display: none; }
+  body.embed .panel { bottom: 12px; }
+
   @media (max-width: 560px) {
     .specs { display: none; }
     .hint { top: 76px; }
@@ -80,6 +84,7 @@
 </script>
 </head>
 <body>
+<script>if (new URLSearchParams(location.search).has('embed')) document.body.classList.add('embed');</script>
 <canvas id="scene" aria-label="Interaktywny model 3D jachtu"></canvas>
 
 <header>
