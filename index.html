@@ -1,0 +1,191 @@
+<!doctype html>
+<html lang="pl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Banat Studios — konfiguratory 3D, strony, grafika</title>
+<meta name="description" content="Banat Studios projektuje konfiguratory 3D produktów, strony internetowe i grafikę 3D. Twój produkt w 3D na stronie — obracany, konfigurowany, gotowy do sprzedaży.">
+<meta name="theme-color" content="#0c0c0d">
+<meta property="og:title" content="Banat Studios — konfiguratory 3D">
+<meta property="og:description" content="Twój produkt w 3D na stronie. Konfiguratory, strony internetowe, grafika.">
+<meta property="og:image" content="assets/img/yacht.jpg">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%230c0c0d'/%3E%3Crect x='20' y='20' width='6' height='6' fill='%23ff5a1f'/%3E%3Cpath d='M7 6h8.5c3.6 0 5.5 1.8 5.5 4.4 0 1.9-1 3.2-2.7 3.7 2.1.5 3.4 1.9 3.4 4.1 0 3-2.2 4.8-6 4.8H7V6zm4 6.7h3.9c1.4 0 2.1-.6 2.1-1.7S16.3 9.4 14.9 9.4H11v3.3zm0 6.8h4.4c1.5 0 2.3-.6 2.3-1.8s-.8-1.8-2.3-1.8H11v3.6z' fill='%23fff'/%3E%3C/svg%3E">
+<link rel="preload" href="assets/fonts/archivo-latin-wdth-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="assets/site.css">
+</head>
+<body>
+
+<nav class="nav" id="nav" aria-label="Główna nawigacja">
+  <a class="logo" href="#top" aria-label="Banat Studios">Banat<b></b><i>Studios</i></a>
+  <ul>
+    <li><a href="#uslugi" data-i18n="nav.services">Usługi</a></li>
+    <li><a href="#dema" data-i18n="nav.work">Dema</a></li>
+    <li><a href="#proces" data-i18n="nav.process">Proces</a></li>
+    <li><a href="#faq">FAQ</a></li>
+  </ul>
+  <div class="lang" role="group" aria-label="Język / Language">
+    <button type="button" data-lang="pl" aria-pressed="true">PL</button>
+    <button type="button" data-lang="en" aria-pressed="false">EN</button>
+  </div>
+  <a class="btn sm" href="#kontakt"><span data-i18n="nav.cta">Darmowe demo</span><span class="arr">→</span></a>
+</nav>
+
+<header class="hero" id="top">
+  <iframe id="stage" title="Konfigurator 3D" allow="fullscreen" loading="eager"></iframe>
+  <div class="veil" id="veil"><span data-i18n="hero.loading">Ładowanie modelu</span></div>
+  <div class="shade"></div>
+  <div class="drag-hint mono" id="dragHint" data-i18n="hero.drag">↻ Przeciągnij, aby obrócić</div>
+  <div class="hero-copy">
+    <div class="kicker mono" data-i18n="hero.kicker">Konfiguratory 3D · Strony · Grafika</div>
+    <h1 class="display" data-i18n="hero.title">Pokaż produkt<br>tak, jak go <em>kupią</em></h1>
+    <div class="demos" role="tablist" aria-label="Dema konfiguratorów" id="demos"></div>
+    <div class="hero-links">
+      <a class="btn" href="#kontakt"><span data-i18n="hero.cta">Zamów demo swojego produktu</span><span class="arr">→</span></a>
+      <a class="link" id="fullscreen" href="demo/el-iseo/" target="_blank" rel="noopener" data-i18n="hero.full">Pełny ekran ↗</a>
+    </div>
+  </div>
+</header>
+
+<main>
+  <!-- 01 manifest -->
+  <section class="light manifest" id="studio">
+    <div class="wrap">
+      <div class="sec-head mono"><span>01</span><span data-i18n="s1.label">Studio</span><span>Banat Studios</span></div>
+      <p class="big rv" data-i18n="s1.big">Zdjęcie pokazuje jeden wariant. <span>Konfigurator pokazuje wszystkie — w kolorze, który klient wybrał, z każdej strony, o każdej porze.</span></p>
+      <div class="grid">
+        <div></div>
+        <ul class="facts">
+          <li class="rv"><b data-i18n="f1.t">W przeglądarce</b><p data-i18n="f1.d">Bez aplikacji i wtyczek. Działa na komputerze, tablecie i telefonie.</p></li>
+          <li class="rv"><b data-i18n="f2.t">Szybki start</b><p data-i18n="f2.d">Lekki kod i modele optymalizowane pod sieć. Klient nie czeka na pasek ładowania.</p></li>
+          <li class="rv"><b data-i18n="f3.t">Jeden kod na stronie</b><p data-i18n="f3.d">Osadzasz na WordPressie, Shopify, WooCommerce, PrestaShop albo dowolnym HTML.</p></li>
+          <li class="rv"><b data-i18n="f4.t">Konfiguracja w linku</b><p data-i18n="f4.d">Każdy wybór zapisuje się w adresie. Klient wysyła go handlowcowi albo w zapytaniu.</p></li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- 02 usługi -->
+  <section class="light services" id="uslugi">
+    <div class="wrap">
+      <div class="sec-head mono"><span>02</span><span data-i18n="s2.label">Usługi</span><span data-i18n="s2.right">Od modelu do sprzedaży</span></div>
+      <ol class="svc">
+        <li class="rv">
+          <span class="num">/01</span>
+          <h3 class="display" data-i18n="sv1.t">Konfiguratory 3D</h3>
+          <div class="desc"><p data-i18n="sv1.d">Interaktywny model Twojego produktu: kolory, materiały, warianty i wyposażenie zmieniane na żywo, z widokami kamery i zapisem konfiguracji.</p>
+            <div class="tags"><span data-i18n="tag.colors">Kolory i materiały</span><span data-i18n="tag.variants">Warianty</span><span data-i18n="tag.views">Widoki kamery</span><span data-i18n="tag.quote">Wycena</span></div></div>
+        </li>
+        <li class="rv">
+          <span class="num">/02</span>
+          <h3 class="display" data-i18n="sv2.t">Strony internetowe</h3>
+          <div class="desc"><p data-i18n="sv2.d">Strony i landing page'e zbudowane wokół produktu — szybkie, dopracowane, z konfiguratorem na pierwszym ekranie, a nie na dole strony.</p>
+            <div class="tags"><span>Landing page</span><span data-i18n="tag.site">Strona firmowa</span><span>CMS</span><span>SEO</span></div></div>
+        </li>
+        <li class="rv">
+          <span class="num">/03</span>
+          <h3 class="display" data-i18n="sv3.t">Grafika i rendery</h3>
+          <div class="desc"><p data-i18n="sv3.d">Z jednego modelu 3D: packshoty w każdym kolorze, sceny lifestyle, animacje 360° i krótkie wideo do social mediów — bez sesji zdjęciowej.</p>
+            <div class="tags"><span>Packshot</span><span>Render</span><span data-i18n="tag.anim">Animacja 360°</span><span>Social</span></div></div>
+        </li>
+        <li class="rv">
+          <span class="num">/04</span>
+          <h3 class="display" data-i18n="sv4.t">Integracje</h3>
+          <div class="desc"><p data-i18n="sv4.d">Konfigurator połączony z Twoim sklepem, cennikiem i skrzynką: wybrana wersja trafia do koszyka albo jako gotowe zapytanie do handlowca.</p>
+            <div class="tags"><span data-i18n="tag.shop">Sklep</span><span>CRM</span><span data-i18n="tag.form">Formularz zapytań</span><span>API</span></div></div>
+        </li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- 03 dema -->
+  <section class="dark work" id="dema">
+    <div class="wrap">
+      <div class="sec-head mono"><span>03</span><span data-i18n="s3.label">Dema</span><span data-i18n="s3.right">Wszystkie działają na żywo</span></div>
+      <h2 class="display rv" data-i18n="s3.title">Kliknij.<br>Obróć. Zmień.</h2>
+      <div class="cards">
+        <a class="card rv" href="demo/el-iseo/" data-demo="yacht" target="_blank" rel="noopener"><img src="assets/img/yacht.jpg" alt="" loading="lazy" width="1400" height="900">
+          <div class="meta"><div><span class="mono" data-i18n="d.yacht.k">Jacht motorowy · 8,35 m</span><b data-i18n="d.yacht.t">Runabout</b></div><span class="go" data-i18n="d.open">Uruchom ↗</span></div></a>
+        <a class="card rv" href="demo/car/" data-demo="car" target="_blank" rel="noopener"><img src="assets/img/car.jpg" alt="" loading="lazy" width="1400" height="900">
+          <div class="meta"><div><span class="mono" data-i18n="d.car.k">Motoryzacja · studio</span><b>GT Coupé</b></div><span class="go" data-i18n="d.open">Uruchom ↗</span></div></a>
+        <a class="card rv" href="demo/camper/" data-demo="camper" target="_blank" rel="noopener"><img src="assets/img/camper.jpg" alt="" loading="lazy" width="1400" height="900">
+          <div class="meta"><div><span class="mono" data-i18n="d.camper.k">Kampery · wyposażenie</span><b data-i18n="d.camper.t">Kamper Van</b></div><span class="go" data-i18n="d.open">Uruchom ↗</span></div></a>
+        <a class="card rv" href="demo/sauna/" data-demo="sauna" target="_blank" rel="noopener"><img src="assets/img/sauna.jpg" alt="" loading="lazy" width="1400" height="900">
+          <div class="meta"><div><span class="mono" data-i18n="d.sauna.k">Ogród · warianty i wymiary</span><b data-i18n="d.sauna.t">Sauna beczka</b></div><span class="go" data-i18n="d.open">Uruchom ↗</span></div></a>
+      </div>
+      <p class="note" data-i18n="s3.note">Dema to modele koncepcyjne zbudowane przez nas od zera. Przy wdrożeniu odtwarzamy Twój produkt na podstawie zdjęć, wymiarów lub plików CAD.</p>
+    </div>
+  </section>
+
+  <!-- 04 proces -->
+  <section class="light process" id="proces">
+    <div class="wrap">
+      <div class="sec-head mono"><span>04</span><span data-i18n="s4.label">Proces</span><span data-i18n="s4.right">Bez ryzyka na start</span></div>
+      <h2 class="display rv" data-i18n="s4.title">Od zdjęcia<br>do konfiguratora</h2>
+      <ol class="steps">
+        <li class="rv"><span class="k">01</span><b data-i18n="p1.t">Wysyłasz produkt</b><p data-i18n="p1.d">Zdjęcia, wymiary, link do strony albo pliki CAD — co masz pod ręką.</p></li>
+        <li class="rv"><span class="k">02</span><b data-i18n="p2.t">Demo w 48 h</b><p data-i18n="p2.d">Przygotowujemy działające demo Twojego produktu. Za darmo i bez zobowiązań.</p></li>
+        <li class="rv"><span class="k">03</span><b data-i18n="p3.t">Wdrożenie</b><p data-i18n="p3.d">Dopracowujemy model, opcje i wygląd, łączymy ze sklepem lub formularzem i osadzamy na stronie.</p></li>
+        <li class="rv"><span class="k">04</span><b data-i18n="p4.t">Rozwój</b><p data-i18n="p4.d">Nowe produkty, kolory i kampanie — dokładamy kolejne warianty i materiały graficzne.</p></li>
+      </ol>
+    </div>
+  </section>
+
+  <div class="light sectors" aria-label="Branże">
+    <div class="marquee" id="marquee"></div>
+  </div>
+
+  <!-- 05 faq -->
+  <section class="light faq" id="faq">
+    <div class="wrap">
+      <div class="grid">
+        <h2 class="display">FAQ</h2>
+        <div class="qa">
+          <details><summary data-i18n="q1">Ile kosztuje konfigurator?</summary><p data-i18n="a1">Wyceniamy indywidualnie — zależy od liczby produktów, wariantów i integracji. Zaczynamy od darmowego demo, więc wiesz, za co płacisz, zanim cokolwiek zamówisz.</p></details>
+          <details><summary data-i18n="q2">Czy potrzebujemy modeli 3D?</summary><p data-i18n="a2">Nie. Wystarczą zdjęcia i wymiary. Jeśli macie pliki CAD lub modele 3D, wykorzystamy je i przygotujemy do działania w przeglądarce.</p></details>
+          <details><summary data-i18n="q3">Czy zadziała na naszej stronie?</summary><p data-i18n="a3">Tak. Konfigurator osadzamy jednym fragmentem kodu w WordPressie, WooCommerce, Shopify, PrestaShop albo dowolnej stronie. Możemy też zbudować nową stronę wokół niego.</p></details>
+          <details><summary data-i18n="q4">Jak działa na telefonach?</summary><p data-i18n="a4">Projektujemy mobile-first: lżejsze efekty na słabszych urządzeniach, sterowanie dotykiem i panel opcji dopasowany do ekranu.</p></details>
+          <details><summary data-i18n="q5">Ile trwa wdrożenie?</summary><p data-i18n="a5">Demo w 48 godzin. Pełne wdrożenie zależy od zakresu — od kilku dni dla jednego produktu do kilku tygodni dla całej linii z integracją sklepu.</p></details>
+          <details><summary data-i18n="q6">Kto zajmuje się hostingiem i zmianami?</summary><p data-i18n="a6">Jak wolisz: przekazujemy pliki na Twój serwer albo utrzymujemy konfigurator u nas i dodajemy nowe warianty na bieżąco.</p></details>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- kontakt -->
+  <section class="dark contact" id="kontakt">
+    <div class="wrap">
+      <div class="sec-head mono"><span>05</span><span data-i18n="s5.label">Kontakt</span><span data-i18n="s5.right">Odpowiadamy w 24 h</span></div>
+      <h2 class="display rv" data-i18n="s5.title">Pokaż nam<br>swój <em>produkt</em></h2>
+      <div class="grid">
+        <div></div>
+        <div>
+          <p class="lead" data-i18n="s5.lead">Wyślij link albo kilka zdjęć. W ciągu 48 godzin dostaniesz działające demo konfiguratora Twojego produktu — za darmo.</p>
+          <div class="direct"><a href="mailto:kontakt@banatstudios.pl">kontakt@banatstudios.pl</a></div>
+        </div>
+        <form id="form" action="contact.php" method="post" novalidate>
+          <div class="field"><label class="mono" for="f-name" data-i18n="fm.name">Imię i nazwisko</label><input id="f-name" name="name" autocomplete="name" required></div>
+          <div class="field"><label class="mono" for="f-email">E-mail</label><input id="f-email" name="email" type="email" autocomplete="email" required></div>
+          <div class="field"><label class="mono" for="f-company" data-i18n="fm.company">Firma / strona www</label><input id="f-company" name="company" autocomplete="organization"></div>
+          <div class="field"><label class="mono" for="f-product" data-i18n="fm.product">Produkt (link lub nazwa)</label><input id="f-product" name="product"></div>
+          <div class="field full"><label class="mono" for="f-msg" data-i18n="fm.msg">Co chcesz pokazać klientom?</label><textarea id="f-msg" name="message" rows="4"></textarea></div>
+          <div class="hp" aria-hidden="true"><label>Website<input name="website" tabindex="-1" autocomplete="off"></label></div>
+          <div class="form-foot">
+            <span class="mono" data-i18n="fm.note">Wysyłając formularz, zgadzasz się na kontakt w sprawie zapytania.</span>
+            <button class="btn" type="submit"><span data-i18n="fm.send">Wyślij zapytanie</span><span class="arr">→</span></button>
+          </div>
+          <div class="form-msg" id="formMsg" role="status" aria-live="polite"></div>
+        </form>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <span>© <span id="year">2026</span> Banat Studios</span>
+  <span class="mono" data-i18n="ft.tag">Konfiguratory 3D · Strony · Grafika</span>
+  <a href="mailto:kontakt@banatstudios.pl">kontakt@banatstudios.pl</a>
+</footer>
+
+<script src="assets/site.js" defer></script>
+</body>
+</html>

@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="pl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Konfigurator 3D</title>
+<link rel="stylesheet" href="../common/page.css">
+<script type="importmap">{ "imports": { "three": "../vendor/three.module.min.js" } }</script>
+</head>
+<body>
+<canvas id="scene" aria-label="Model 3D"></canvas>
+<header>
+  <div class="brand"><small></small><h1></h1></div>
+  <div class="specs"></div>
+</header>
+<div class="hint" id="hint"></div>
+<section class="panel" aria-label="Konfiguracja"></section>
+<div id="loader">…</div>
+<div id="error"><div><h2>WebGL</h2><p>Ta przeglądarka nie obsługuje grafiki 3D / This browser does not support WebGL.</p></div></div>
+<script type="module" src="./main.js"></script>
+</body>
+</html>

@@ -71,7 +71,24 @@
 
   /* tryb osadzenia (iframe na stronie studia) */
   body.embed header, body.embed .hint { display: none; }
-  body.embed .panel { bottom: 12px; }
+  body.embed #scene { touch-action: pan-y; } /* pionowy gest przewija stronę-matkę */
+  body.embed.nopanel .panel { display: none; }
+  body.embed { background: #0b0c0d; --accent: #ff5a1f; }
+  body.embed button.chip { border-radius: 2px; }
+  body.embed .panel { -webkit-backdrop-filter: none; backdrop-filter: none; background: rgba(12, 13, 15, .84); }
+  @media (min-width: 900px) {
+    body.embed .panel { left: auto; right: 28px; bottom: 28px; transform: none; width: 380px; border-radius: 4px;
+      background: rgba(12, 13, 15, .84); border-color: rgba(255,255,255,.1); }
+    body.embed .panel .row { flex-direction: column; align-items: flex-start; }
+    body.embed .swatch { width: 28px; height: 28px; }
+  }
+  @media (max-width: 899px) { body.embed .panel { bottom: 10px; border-radius: 4px; } }
+  @media (max-width: 899px) {
+    body.embed .panel { padding: 10px 12px; gap: 8px; }
+    body.embed .panel .views { display: none; }
+    body.embed .swatch { width: 26px; height: 26px; }
+    body.embed .label { font-size: 10px; }
+  }
 
   @media (max-width: 560px) {
     .specs { display: none; }
@@ -80,11 +97,11 @@
   }
 </style>
 <script type="importmap">
-{ "imports": { "three": "./vendor/three.module.min.js" } }
+{ "imports": { "three": "../vendor/three.module.min.js" } }
 </script>
 </head>
 <body>
-<script>if (new URLSearchParams(location.search).has('embed')) document.body.classList.add('embed');</script>
+<script>{ const q = new URLSearchParams(location.search); if (q.has('embed')) document.body.classList.add('embed'); if (q.has('nopanel')) document.body.classList.add('nopanel'); }</script>
 <canvas id="scene" aria-label="Interaktywny model 3D jachtu"></canvas>
 
 <header>

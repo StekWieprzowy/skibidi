@@ -1,33 +1,27 @@
-# El-Iseo – demo konfiguratora 3D
+# Banat Studios — strona + dema konfiguratorów 3D
 
-Interaktywny model motorówki w stylu Riva El-Iseo (LOA 8,35 m, szerokość 2,5 m) w przeglądarce:
-obracanie i zoom, kolor kadłuba, kolor tapicerki, bimini, gotowe widoki kamery (3/4, bok, góra, rufa, kokpit).
-Wybrana konfiguracja zapisuje się w adresie strony (np. `#c=1&u=3`), więc można ją udostępnić linkiem.
-
-Realizm: fizycznie liczone niebo (model Preethama) z chmurami, odległe wzgórza z perspektywą powietrzną,
-woda z lustrzanymi odbiciami i prawdziwą mapą normalnych fal (`assets/waternormals.jpg` z repozytorium three.js),
-cień jachtu na wodzie, okluzja otoczenia (GTAO), bloom, tone mapping ACES, lakier metaliczny z drobinkami
-pod lakierem bezbarwnym, faktura skóry i tkaniny. Na telefonach ciężkie efekty (GTAO, MSAA) są wyłączane.
-Parametry światła można stroić w adresie: `?az=110&el=30&sun=22&exp=0.34`.
-
-Model jest w całości generowany kodem (Three.js) na podstawie planu pokładu i rysunku bocznego:
-jedna ciągła powierzchnia kadłuba z zaokrągloną krawędzią pokładu i kokpitem, mahoniowy pokład z jasnymi fugami,
-przyciemniana szyba-kopuła, chromowany odbojnik i przetłoczenie na burcie, platforma rufowa z teakiem,
-wnętrze kokpitu (sofy, deska rozdzielcza, kierownica). Woda ma lustrzane odbicia, niebo jest generowane shaderem.
-
-## Uruchomienie (konfigurator jest w `demo/el-iseo/`)
-
-Strona wymaga lokalnego serwera HTTP (moduły ES nie działają z `file://`):
-
-- `npx serve` (Node.js), albo
-- `python -m http.server 8000` / `py -m http.server 8000` (Python), albo
-- rozszerzenie **Live Server** w VS Code → „Open with Live Server” na `index.html`.
-
-Nie trzeba nic instalować ani budować — Three.js jest w katalogu `vendor/`.
+Statyczna strona (HTML/CSS/JS, bez budowania) z działającymi konfiguratorami 3D na pierwszym ekranie.
 
 ## Struktura
 
-- `index.html` – układ strony i interfejs
-- `main.js` – model jachtu, scena, woda i niebo, konfigurator
-- `vendor/` – Three.js r160 (+ OrbitControls, RoundedBoxGeometry, Reflector, post-processing, Sky z dodanymi chmurami)
-- `assets/` – tekstura normalnych fal
+- `index.html`, `assets/` — strona studia (PL/EN, czcionki Archivo + IBM Plex Mono hostowane lokalnie, licencja OFL)
+- `contact.php` — wysyłka formularza e-mailem (hosting z PHP, np. home.pl). Ustaw adresy `TO` i `FROM` na górze pliku.
+  Bez PHP formularz otwiera program pocztowy (mailto).
+- `demo/` — konfiguratory 3D (Three.js r160 w `demo/vendor/`):
+  - `el-iseo/` — jacht motorowy (runabout)
+  - `car/` — GT coupé w studiu
+  - `camper/` — kamper van w plenerze
+  - `sauna/` — sauna beczka
+  - `common/` — wspólny silnik scen (`stage.js`), panel opcji (`ui.js`), style
+- Dema przyjmują parametry: `?embed` (tryb osadzenia na stronie), `?lang=en`, `?nopanel`.
+  Konfiguracja zapisuje się w hashu adresu, np. `demo/car/#p=1&r=2&c=1`.
+
+## Uruchomienie lokalnie
+
+```
+npx serve        # albo: python -m http.server 8000
+```
+
+## Wdrożenie na home.pl
+
+Wgraj przez FTP całą zawartość (index.html, assets/, demo/, contact.php) do katalogu domeny.

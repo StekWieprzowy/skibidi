@@ -1,13 +1,13 @@
 import * as THREE from 'three';
-import { OrbitControls } from './vendor/OrbitControls.js';
-import { RoundedBoxGeometry } from './vendor/RoundedBoxGeometry.js';
-import { Reflector } from './vendor/Reflector.js';
-import { Sky } from './vendor/jsm/objects/Sky.js';
-import { EffectComposer } from './vendor/jsm/postprocessing/EffectComposer.js';
-import { RenderPass } from './vendor/jsm/postprocessing/RenderPass.js';
-import { GTAOPass } from './vendor/jsm/postprocessing/GTAOPass.js';
-import { UnrealBloomPass } from './vendor/jsm/postprocessing/UnrealBloomPass.js';
-import { OutputPass } from './vendor/jsm/postprocessing/OutputPass.js';
+import { OrbitControls } from '../vendor/OrbitControls.js';
+import { RoundedBoxGeometry } from '../vendor/RoundedBoxGeometry.js';
+import { Reflector } from '../vendor/Reflector.js';
+import { Sky } from '../vendor/jsm/objects/Sky.js';
+import { EffectComposer } from '../vendor/jsm/postprocessing/EffectComposer.js';
+import { RenderPass } from '../vendor/jsm/postprocessing/RenderPass.js';
+import { GTAOPass } from '../vendor/jsm/postprocessing/GTAOPass.js';
+import { UnrealBloomPass } from '../vendor/jsm/postprocessing/UnrealBloomPass.js';
+import { OutputPass } from '../vendor/jsm/postprocessing/OutputPass.js';
 
 /* ==================================================================== *
  *  Kształt kadłuba.  Układ: x — od pawęży (0) do dziobu (LH), y — w górę
@@ -139,7 +139,7 @@ const QP = new URLSearchParams(location.search);
 const canvas = document.getElementById('scene');
 let renderer;
 try {
-  renderer = new THREE.WebGLRenderer({ canvas, antialias: true, powerPreference: 'high-performance', preserveDrawingBuffer: true });
+  renderer = new THREE.WebGLRenderer({ canvas, antialias: true, powerPreference: 'high-performance' });
 } catch (e) {
   document.getElementById('error').style.display = 'grid';
   document.getElementById('loader').remove();
@@ -157,15 +157,18 @@ const camera = new THREE.PerspectiveCamera(30, 1, 0.1, 30000);
 
 // skala jasności dla elementów sceny o stałych kolorach (woda, wzgórza), dopasowana do ekspozycji
 const SCENE_LIGHT = 2.4;
+const LANG_EN = (QP.get('lang') || '').toLowerCase() === 'en';
+const T = (pl, en) => (LANG_EN ? en : pl);
 const NARROW = window.innerWidth / window.innerHeight < 0.8;
 const VIEWS = {
-  iso:     { label: '3/4',    pos: V(6.6, 2.7, 7.4),     target: V(0, 0.55, 0) },
-  side:    { label: 'Bok',    pos: V(0.01, 1.2, 14.5),   target: V(0, 0.55, 0) },
-  top:     { label: 'Góra',   pos: V(0.01, 15.5, 0.6),   target: V(0, 0.2, 0) },
-  rear:    { label: 'Rufa',   pos: V(-11.5, 2.5, 4.2),   target: V(0, 0.55, 0) },
-  cockpit: { label: 'Kokpit', pos: V(-3.6, 3.4, 0.001),  target: V(1.3, 0.55, 0) },
+  iso:     { label: T('3/4', '3/4'),    pos: V(6.6, 2.7, 7.4),     target: V(0, 0.55, 0) },
+  side:    { label: T('Bok', 'Side'),    pos: V(0.01, 1.2, 14.5),   target: V(0, 0.55, 0) },
+  top:     { label: T('Góra', 'Top'),   pos: V(0.01, 15.5, 0.6),   target: V(0, 0.2, 0) },
+  rear:    { label: T('Rufa', 'Stern'),   pos: V(-11.5, 2.5, 4.2),   target: V(0, 0.55, 0) },
+  cockpit: { label: T('Kokpit', 'Cockpit'), pos: V(-3.6, 3.4, 0.001),  target: V(1.3, 0.55, 0) },
 };
 if (NARROW) Object.values(VIEWS).forEach((v) => v.pos.sub(v.target).multiplyScalar(1.85).add(v.target));
+else if (QP.has('embed')) Object.values(VIEWS).forEach((v) => v.pos.sub(v.target).multiplyScalar(1.32).add(v.target));
 camera.position.copy(VIEWS.iso.pos);
 
 const controls = new OrbitControls(camera, canvas);
@@ -178,6 +181,7 @@ controls.maxDistance = NARROW ? 40 : 28;
 controls.maxPolarAngle = Math.PI * 0.49;
 controls.autoRotate = true;
 controls.autoRotateSpeed = 0.7;
+if (QP.has('embed')) controls.enableZoom = false;
 
 /* ==================================================================== *
  *  Niebo: fizyczny model atmosfery (Preetham) + chmury
@@ -935,19 +939,19 @@ hullGroup.add(bimini);
  *  Konfigurator
  * ==================================================================== */
 const HULL_COLORS = [
-  { name: 'Błękit stalowy', hex: '#2f5075', metal: 0.3, rough: 0.38 },
-  { name: 'Kość słoniowa',  hex: '#ece2cb', metal: 0.0,  rough: 0.22 },
-  { name: 'Srebrny',        hex: '#a9b0b6', metal: 0.55, rough: 0.32 },
-  { name: 'Grafit',         hex: '#2c3137', metal: 0.5,  rough: 0.3 },
-  { name: 'Czarny',         hex: '#0f1114', metal: 0.2,  rough: 0.2 },
-  { name: 'Zieleń',         hex: '#244a40', metal: 0.4,  rough: 0.3 },
-  { name: 'Bordo',          hex: '#5a1a25', metal: 0.4,  rough: 0.3 },
+  { name: T('Błękit stalowy', 'Steel blue'), hex: '#2f5075', metal: 0.3, rough: 0.38 },
+  { name: T('Kość słoniowa', 'Ivory'),  hex: '#ece2cb', metal: 0.0,  rough: 0.22 },
+  { name: T('Srebrny', 'Silver'),        hex: '#a9b0b6', metal: 0.55, rough: 0.32 },
+  { name: T('Grafit', 'Graphite'),         hex: '#2c3137', metal: 0.5,  rough: 0.3 },
+  { name: T('Czarny', 'Black'),         hex: '#0f1114', metal: 0.2,  rough: 0.2 },
+  { name: T('Zieleń', 'Green'),         hex: '#244a40', metal: 0.4,  rough: 0.3 },
+  { name: T('Bordo', 'Burgundy'),          hex: '#5a1a25', metal: 0.4,  rough: 0.3 },
 ];
 const UPHOLSTERY = [
-  { name: 'Niebieska', hex: '#4d6f96' },
-  { name: 'Szara',     hex: '#7a8086' },
-  { name: 'Kremowa',   hex: '#d9cfbb' },
-  { name: 'Koniak',    hex: '#8a5634' },
+  { name: T('Niebieska', 'Blue'), hex: '#4d6f96' },
+  { name: T('Szara', 'Grey'),     hex: '#7a8086' },
+  { name: T('Kremowa', 'Cream'),   hex: '#d9cfbb' },
+  { name: T('Koniak', 'Cognac'),    hex: '#8a5634' },
 ];
 const state = { c: 0, u: 0 };
 const readHash = () => {
@@ -980,6 +984,11 @@ const selectHull = buildSwatches('swatches', 'colorName', HULL_COLORS, 'c', (c) 
 });
 const selectUph = buildSwatches('uphSwatches', 'uphName', UPHOLSTERY, 'u', (c) => leatherMat.color.set(c.hex));
 selectHull(state.c, false);
+if (LANG_EN) {
+  document.documentElement.lang = 'en';
+  document.querySelectorAll('.panel .label').forEach((l, i) => { l.firstChild.textContent = i === 0 ? 'Hull colour ' : 'Upholstery '; });
+  const hint = document.getElementById('hint'); if (hint) hint.textContent = 'Drag to rotate · scroll or pinch to zoom';
+}
 selectUph(state.u, false);
 
 document.getElementById('bimini').addEventListener('change', (e) => { bimini.visible = e.target.checked; });
@@ -999,7 +1008,7 @@ Object.entries(VIEWS).forEach(([key, v]) => {
   viewsBox.appendChild(b);
 });
 const autoBtn = document.createElement('button');
-autoBtn.className = 'chip'; autoBtn.textContent = 'Auto-obrót';
+autoBtn.className = 'chip'; autoBtn.textContent = T('Auto-obrót', 'Auto-rotate');
 viewsBox.appendChild(autoBtn);
 function setAuto(on) {
   autoOn = on; controls.autoRotate = on; clearTimeout(idleTimer);
@@ -1035,6 +1044,10 @@ function resize() {
   renderer.setSize(w, h, false);
   camera.aspect = w / h;
   camera.fov = NARROW ? 44 : 30;
+  if (QP.has('embed')) {
+    if (w >= 900) camera.setViewOffset(w, h, -w * 0.11, h * 0.07, w, h);
+    else camera.setViewOffset(w, h, 0, -h * 0.06, w, h);
+  }
   camera.updateProjectionMatrix();
   water.getRenderTarget().setSize(Math.round(w * DPR * 0.6), Math.round(h * DPR * 0.6));
   composer.setPixelRatio(DPR);
@@ -1046,7 +1059,11 @@ resize();
 const clock = new THREE.Clock();
 const ease = (t) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
 const flagPos = flagGeo.attributes.position;
+let paused = false, raf = 0;
+window.__pause = (p) => { paused = p; if (!p && !raf) raf = requestAnimationFrame(frame); };
 function frame() {
+  raf = 0;
+  if (paused) return; // pętla stoi całkowicie — zero pracy w tle
   const t = clock.getElapsedTime();
   water.material.uniforms.uTime.value = t;
   boat.position.y = Math.sin(t * 1.0) * 0.018;
@@ -1067,11 +1084,12 @@ function frame() {
   }
   controls.update();
   composer.render();
-  requestAnimationFrame(frame);
+  raf = requestAnimationFrame(frame);
 }
 frame();
 const loader = document.getElementById('loader');
 loader.classList.add('done');
 setTimeout(() => loader.remove(), 800);
 
+window.__demo = { stage: { controls, goView, camera } };
 window.__yacht = { camera, controls, goView, THREE, renderer, sun, sky, bloom, gtao, water, scene, hullMat, composer };
